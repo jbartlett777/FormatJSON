@@ -1,7 +1,6 @@
 <cfscript>
 /**
 // From https://cflib.org/udf/formatJSON with correction from "Mary" and "Mr Namako" shown on cflib.org plus additional updates by John Bartlett:
-*	Wipe out free formatting in case of pre-formatted JSON passed in
 *	Do not add line feeds after escaped quotes
 *	Hanlde large JSON by splitting up the return string into two variables due esponently longer processing on appending onto larger strings
 *	Ignore JSON characters if inside a quoted string
@@ -29,9 +28,6 @@ public string function formatJSON(instr) {
 	var InQuote=0;
 
 	if (IsJSON(str) EQ "NO") return "Not a JSON object";
-
-	// Re-encode JSON object to remove any existing formatting
-	str=SerializeJSON(DeserializeJSON(str));
 
 	str=Replace(str,"(?<!\\)(?:\\\\)*\\""",Chr(2),"All"); // Replace escaped quotes with a placeholder so they are not processed in the loop but not where a escaped backslash at the end of a text string
 	strLen = len(str);
