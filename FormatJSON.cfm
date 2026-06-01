@@ -19,22 +19,26 @@
 
 public string function formatJSON(instr) {
 	var str=arguments.instr;
-	var fjson = '';
+	var char=""; // Current char being processed
+	var fjson = ''; // Output hold variables
 	var fjson2 = '';
 	var pos = 0;
+	var i=0;
+	var j=0;
+	var k=0;
 	var strLen = 0;
 	var indentStr = chr(9); // Adjust Indent Token If you Like
 	var newLine = chr(10); // Adjust New Line Token If you Like <BR>
 	var InQuote=0;
+	var QuoteScan="";
 
 	if (IsJSON(str) EQ "NO") return "Not a JSON object";
 
-	str=Replace(str,"(?<!\\)(?:\\\\)*\\""",Chr(2),"All"); // Replace escaped quotes with a placeholder so they are not processed in the loop but not where a escaped backslash at the end of a text string
 	strLen = len(str);
 
-	for (var i=1; i<=strLen; i++) {
-		var char = mid(str,i,1);
-		if (char EQ Chr(34)) {
+	for (i=1; i<=strLen; i++) {
+		char = mid(str,i,1);
+		if (char EQ Chr(34) AND mid(str,i-1,1) NEQ "\") {
 			// Flag if inside a quote or not
 			InQuote = 1 - InQuote;
 		}
@@ -44,7 +48,7 @@ public string function formatJSON(instr) {
 				fjson &= newLine;
 				pos = pos - 1;
 
-				for (var j=1; j<=pos; j++) {
+				for (j=1; j<=pos; j++) {
 					fjson &= indentStr;
 				}
 			}
@@ -52,7 +56,6 @@ public string function formatJSON(instr) {
 
 		fjson &= char;
 
-		//if (char == '{' || char == '[' || (char == ',' && InQuote EQ 0)) {
 		if (ListFind(",|{|[",char,"|") AND InQuote EQ 0) {
 			fjson &= newLine;
 
@@ -60,18 +63,17 @@ public string function formatJSON(instr) {
 				pos = pos + 1;
 			}
 
-			for (var k=1; k<=pos; k++) {
+			for (k=1; k<=pos; k++) {
 				fjson &= indentStr;
 			}
 		}
 
-		if (Len(fjson) GTE 10240) {
+		// If the string exceeds 10K, append to fjson2 and clear fjson to avoid the exponential delay in appending to a large string in java
+		if (Len(fjson) GT 10240) {
 			fjson2=fjson2 & fjson;
 			fjson="";
 		}
 	}
-
-	str=Replace(str,Chr(2),"\""","All"); // Replace placeholder with original escaped quotes
 
 	return fjson2 & fjson;
 }
