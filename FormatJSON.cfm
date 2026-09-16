@@ -2,7 +2,7 @@
 /**
 // From https://cflib.org/udf/formatJSON with correction from "Mary" and "Mr Namako" shown on cflib.org plus additional updates by John Bartlett:
 *	Do not add line feeds after escaped quotes
-*	Hanlde large JSON by splitting up the return string into two variables due esponently longer processing on appending onto larger strings
+*	Hanlde large JSON by splitting up the return string into two variables due exponentially longer processing on appending onto larger strings
 *	Ignore JSON characters if inside a quoted string
 * Formats a JSON string with indents &amp; new lines.
 * v1.0 by Ben Koshy
@@ -68,7 +68,7 @@ public string function formatJSON(instr) {
 			}
 		}
 
-		// If the string exceeds 10K, append to fjson2 and clear fjson to avoid the exponential delay in appending to a large string in java
+		// If the string exceeds 10K, append to fjson2 and clear fjson to avoid the exponentially delay in appending to a large string in java
 		if (Len(fjson) GT 10240) {
 			fjson2=fjson2 & fjson;
 			fjson="";
